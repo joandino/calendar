@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { Fragment } from 'react';
+import './assets/app.scss';
+import Calendar from './components/Calendar';
 
 function App() {
   return (
-    <h1>Hola Mundo!</h1>
+    <Fragment>
+      <Calendar />
+    </Fragment>
   );
 }
 
