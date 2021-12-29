@@ -1,10 +1,14 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import '../assets/calendar.scss';
 import moment from 'moment';
+import ReminderDialog from './ReminderDialog';
 
 const Calendar = () => {
     const [date, setDate] = useState(moment().toDate());
     const todayDate = moment().toDate();
+
+    const [open, setOpen] = useState(false);
+    const [selectedDate, setSelectedDate] = useState(moment().toDate());
 
     const weekDaysShortName = () => {
         // const weekDaysShort = moment.weekdaysShort();
@@ -20,8 +24,24 @@ const Calendar = () => {
         return weekDaysShort;
     }
 
+    const clickPrev = () => {
+        setDate(moment(date).subtract(1, 'M').toDate());
+    }
+
+    const clickNext = () => {
+        setDate(moment(date).add(1, 'M').toDate());
+    }
+
     const onClickDay = (d:any) => {
-        console.log(d);
+        let month = moment(date).startOf("month").format('M');
+        let year = moment(date).startOf("year").format('YYYY');
+
+        setSelectedDate(moment(`${year}-${month}-${d}`).toDate());
+        setOpen(true);
+    }
+
+    const handleClose = () => {
+        setOpen(false);
     }
 
     const getMonthCalendar = () => {
@@ -75,7 +95,11 @@ const Calendar = () => {
 
         return(
             <table id="calendar">
-                <caption>{title}</caption>
+                <caption>
+                    <div className="arrow left" onClick={clickPrev}></div>
+                    {title}
+                    <div className="arrow right" onClick={clickNext}></div>
+                </caption>
                 <thead className="weekdays">
                     {weekDaysShortName()}
                 </thead>
@@ -93,6 +117,7 @@ const Calendar = () => {
     return(
         <Fragment>
             {getMonthCalendar()}
+            <ReminderDialog open={open} date={selectedDate}  handleClose={handleClose} />
         </Fragment>
     );
 }
