@@ -108,6 +108,45 @@ caption {
 	cursor: not-allowed;
 }
 
+.arrow {
+	cursor: pointer;
+	position: absolute;
+	width: 1vmin;
+	height: 1vmin;
+	background: transparent;
+	border-top: 0.5vmin solid white;
+	border-right: 0.5vmin solid white;
+	box-shadow: 0 0 0 lightgray;
+	transition: all 200ms ease;
+	
+	&.left {
+		left: 20%;
+		top: 3%;
+		transform: translate3d(0,-50%,0) rotate(-135deg);
+	}
+
+	&.right {
+		right: 20%;
+		margin-top: -.5%;
+		transform: translate3d(0,-50%,0) rotate(45deg);
+	}
+	
+	&:hover {
+		border-color: orange;
+		box-shadow: 0.5vmin -0.5vmin 0 white;
+	}
+	
+	&:before { // for better hit area
+		content: '';
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-40%,-60%) rotate(45deg);
+		width: 200%;
+		height: 200%;
+	}
+}
+
 /* ============================
 				Mobile Responsiveness
    ============================*/
