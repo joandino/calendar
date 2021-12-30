@@ -3,9 +3,30 @@ import '../assets/calendar.scss';
 import moment from 'moment';
 import ReminderDialog from './ReminderDialog';
 
-const Calendar = () => {
+import { useSelector, useDispatch } from 'react-redux';
+import { getMonthlyReminders } from '../actions/reminderActions';
+import { RootState } from '../reducers';
+
+const Calendar = (props:any) => {
+    const dispatch = useDispatch();
+
+    const getReminders = () => dispatch(getMonthlyReminders(`${year}${monthNumber}${firstDayOfMonth}`, `${year}${monthNumber}${lastDayOfMonth}`, props.clientIp));
+
+    // const reminders = useSelector((state) => state.reminders.reminders);
+    const reminders = useSelector((state: RootState) => {
+        return state.reminders;
+    });
+
     const [date, setDate] = useState(moment().toDate());
+    const [firstDayOfMonth, setFirstDayOfMonth] = useState(Number(moment(date).startOf("month").format("DD")));
+    const [lastDayOfMonth, setLastDayOfMonth] = useState(Number(moment(date).endOf("month").format("DD")));
+    const [monthNumber, setMonthNumber] = useState(moment(date).startOf("month").format('M'));
+    const [year, setYear] = useState(moment(date).startOf("year").format('YYYY'));
+
     const todayDate = moment().toDate();
+    
+    const [monthTitle, setMonthTitle] = useState("");
+    const [monthDays, setMonthDays] = useState(null);
 
     const [open, setOpen] = useState(false);
     const [selectedDate, setSelectedDate] = useState(moment().toDate());
@@ -44,26 +65,32 @@ const Calendar = () => {
         setOpen(false);
     }
 
-    const getMonthCalendar = () => {
+    const getMonthCalendar = async () => {
         let firstDay = Number(moment(date).startOf("month").format("d"));
+        let lastDay = Number(moment(date).endOf("month").format("d"));
         let blanks = [];
         let actualMonth = moment(todayDate).startOf("month").format('MMMM');
         let month = moment(date).startOf("month").format('MMMM');
+        let monthNumber = moment(date).startOf("month").format('M');
         let year = moment(date).startOf("year").format('YYYY');
         let title = month + ' ' + year;
 
+        setMonthTitle(title);
+
         for(let i=0; i < firstDay; i++){
             blanks.push(
-                <td className="day other-month">{""}</td>
+                <td key={i} className="day other-month">{""}</td>
             )
         }
 
         let daysInMonth = [];
         let today = moment().date();
 
-        for(let j=1; j <= moment().daysInMonth(); j++){
+        for(let j=1, len = moment().daysInMonth(); j <= len; j++){
+            // var res = await axios.get(`${process.env.REACT_APP_API_URL}/reminders/${year}${monthNumber}${j}/${props.clientIp}`);
+
             daysInMonth.push(
-                <td key={j} className="day" onDoubleClick={() => onClickDay(j)}>
+                <td key={`${month}${j}`} className="day" onDoubleClick={() => onClickDay(j)}>
                     <div className={j===today && actualMonth===month ? "today" : "date"}>
                         {j}
                     </div>
@@ -90,33 +117,40 @@ const Calendar = () => {
         });
 
         let rowsDaysInMonth = rows.map((d:any, i:any) => {
-            return <tr className="days">{d}</tr>;
+            return <tr key={`${d}${i}`} className="days">{d}</tr>;
         });
 
-        return(
+        setMonthDays(rowsDaysInMonth);
+    }
+
+    useEffect(() => {
+        setFirstDayOfMonth(Number(moment(date).startOf("month").format("DD")));
+        setLastDayOfMonth(Number(moment(date).endOf("month").format("DD")));
+        setMonthNumber(moment(date).startOf("month").format('M'));
+        setYear(moment(date).startOf("year").format('YYYY'));
+    }, [date]);
+
+    useEffect(() => {
+        getReminders();
+        console.log(reminders);
+        getMonthCalendar();
+    }, [monthNumber]);
+
+    return(
+        <Fragment>
             <table id="calendar">
                 <caption>
                     <div className="arrow left" onClick={clickPrev}></div>
-                    {title}
+                    {monthTitle}
                     <div className="arrow right" onClick={clickNext}></div>
                 </caption>
                 <thead className="weekdays">
                     {weekDaysShortName()}
                 </thead>
                 <tbody className="days">
-                    {rowsDaysInMonth}
+                    {monthDays}
                 </tbody>
             </table>
-        )
-    }
-
-    useEffect(() => {
-        getMonthCalendar();
-    }, [date]);
-
-    return(
-        <Fragment>
-            {getMonthCalendar()}
             <ReminderDialog open={open} date={selectedDate}  handleClose={handleClose} />
         </Fragment>
     );
