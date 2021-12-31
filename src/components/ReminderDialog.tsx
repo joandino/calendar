@@ -11,6 +11,8 @@ import Snackbar from '@mui/material/Snackbar';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import moment from 'moment';
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { addReminderAction } from '../actions/reminderActions';
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
     props,
@@ -25,14 +27,17 @@ const ReminderDialog = (props:any) => {
     const [popAlert, setPopAlert] = useState(false);
     const [alertText, setAlertText] = useState("");
 
-    const [date, setDate] = useState(props.date);
-    const [title, setTitle] = useState("");
-    const [city, setCity] = useState("");
-    const [fromTime, setFromTime] = useState("07:30");
-    const [toTime, setToTime] = useState("08:00");
+    const [date, setDate] = useState(props.data.date);
+    const [title, setTitle] = useState(props.data.title);
+    const [city, setCity] = useState(props.data.city);
+    const [fromTime, setFromTime] = useState(props.data.fromTime);
+    const [toTime, setToTime] = useState(props.data.toTime);
 
     const [weatherIcon, setWeatherIcon] = useState("");
     const [forecast, setForecast] = useState("");
+
+    const dispatch = useDispatch();
+    const addReminder = (reminder:any) => dispatch(addReminderAction(reminder));
 
     const handleClose = () => {
         setPopAlert(false);
@@ -94,15 +99,36 @@ const ReminderDialog = (props:any) => {
         if(title.trim() === ""){
             setAlertText("Title is required");
             setPopAlert(true);
+            return;
         } else if(city.trim() === ""){
             setAlertText("City is required");
             setPopAlert(true);
+            return;
         } else if(fromTime === "" || toTime === ""){
             setAlertText("From Time and To Time is required");
             setPopAlert(true);
+            return;
         }
 
-        console.log(weatherIcon);
+        let id = 0;
+        let day = moment(date).startOf("day").format('D');
+        let monthNumber = moment(date).startOf("month").format('M');
+        let year = moment(date).startOf("year").format('YYYY');
+
+        let dateCode = Number(`${year}${monthNumber}${day}`);
+        let ipAddress = props.data.ipAddress;
+
+        addReminder({
+            id,
+            dateCode,
+            title,
+            fromTime,
+            toTime,
+            city,
+            ipAddress
+        })
+
+        props.handleAddReminder();
     }
 
     useEffect(() => {
@@ -110,8 +136,13 @@ const ReminderDialog = (props:any) => {
     }, [props.open])
 
     useEffect(() => {
-        setDate(props.date);
-    }, [props.date])
+        setTitle(props.data.title);
+        setCity(props.data.city);
+        setFromTime(props.data.fromTime);
+        setToTime(props.data.toTime);
+
+        setDate(props.data.date);
+    }, [props.data]);
 
     return(
         <Fragment>
@@ -189,7 +220,7 @@ const ReminderDialog = (props:any) => {
                 </DialogContent>
                 <DialogActions>
                 <Button onClick={handleClose}>Cancel</Button>
-                <Button onClick={handleAddReminder}>Add</Button>
+                <Button onClick={handleAddReminder}>Save</Button>
                 </DialogActions>
             </Dialog>
 
