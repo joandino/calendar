@@ -7,6 +7,35 @@ import { GET_REMINDERS,
     ADD_REMINDER_ERROR 
 } from '../types';
 
+//Add reminder functions
+export function addReminderAction(reminder:any) {
+    return (dispatch:any) => {
+        dispatch(addReminder());
+
+        try {
+            axios.post(`${process.env.REACT_APP_API_URL}/reminders`, reminder);
+            dispatch(addReminderOk(reminder));
+        } catch (error) {
+            console.log(error);
+            dispatch(addReminderError(true));
+        }
+    }
+}
+
+const addReminder = () => ({
+    type: ADD_REMINDER
+});
+
+const addReminderOk = (reminder:any) => ({
+    type: ADD_REMINDER_OK,
+    payload: reminder
+});
+
+const addReminderError = (state:any) => ({
+    type: ADD_REMINDER_ERROR,
+    payload: state
+});
+
 //Get reminder functions
 export function getMonthlyReminders(startDateCode:any, endDateCode:any, ip:any) {
     return async(dispatch:any) => {
@@ -14,7 +43,6 @@ export function getMonthlyReminders(startDateCode:any, endDateCode:any, ip:any) 
 
         try {
             const res = await axios.get(`${process.env.REACT_APP_API_URL}/reminders/${startDateCode}/${endDateCode}/${ip}`);
-            // console.log(startDateCode, endDateCode);
             dispatch(getRemindersOk(res.data));
         } catch (error) {
             console.log(error);
