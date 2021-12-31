@@ -4,7 +4,7 @@ import moment from 'moment';
 import ReminderDialog from './ReminderDialog';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { getMonthlyReminders } from '../actions/reminderActions';
+import { getMonthlyReminders, getReminderEditAction } from '../actions/reminderActions';
 import { RootState } from '../reducers';
 
 const Calendar = (props:any) => {
@@ -31,8 +31,6 @@ const Calendar = (props:any) => {
     const [data, setData] = useState({});
 
     const weekDaysShortName = () => {
-        // const weekDaysShort = moment.weekdaysShort();
-
         let weekDaysShort = moment.weekdaysShort().map(day => {
             return(
                 <th key={day}>
@@ -64,7 +62,8 @@ const Calendar = (props:any) => {
             toTime: "08:00",
             city: "",
             ipAddress: props.clientIp,
-            date: moment(`${year}-${month}-${d}`).toDate()
+            date: moment(`${year}-${month}-${d}`).toDate(),
+            action: "ADD"
         })
 
         setOpen(true);
@@ -76,7 +75,6 @@ const Calendar = (props:any) => {
 
     const handleAddedReminder = () => {
         setOpen(false);
-        console.log("add");
     }
 
     const handleDoubleClickEvent = (e:any) => {
@@ -94,8 +92,19 @@ const Calendar = (props:any) => {
             toTime: event.toTime,
             city: event.city,
             ipAddress: props.clientIp,
-            date: moment(`${event.dateCode}`).toDate()
+            date: moment(`${event.dateCode}`).toDate(),
+            action: "EDIT"
         });
+
+        dispatch(getReminderEditAction({
+            id: event.id,
+            dateCode: event.dateCode,
+            title: event.title,
+            fromTime: event.fromTime,
+            toTime: event.toTime,
+            city: event.city,
+            ipAddress: props.clientIp,
+        }));
 
         setOpen(true);
     }
@@ -126,10 +135,6 @@ const Calendar = (props:any) => {
                 eventsDay = reminders.reminders.filter((item:any) => item.dateCode === Number(`${year}${monthNumber}${j}`));
             }
 
-            if(j===17){
-                console.log(reminders.reminders);
-            }
-
             daysInMonth.push(
                 <td key={`${month}${j}`} className="day" onDoubleClick={() => onClickDay(j)}>
                     <div className={j===today && actualMonth===month ? "today" : "date"}>
@@ -140,7 +145,7 @@ const Calendar = (props:any) => {
                         return <div className="event" 
                                     key={`${event.id}`}
                                     id={`${event.id}`}
-                                    onDoubleClick={(e:any) => handleDoubleClickEvent(e)} 
+                                    onDoubleClick={(e:any) => handleDoubleClickEvent(e)}
                                 >
                                     <div className="event-desc" id={`${event.id}`}>
                                         {event.title}
@@ -191,7 +196,6 @@ const Calendar = (props:any) => {
     }, [monthNumber]);
 
     useEffect(() => {
-        console.log("effect");
         getMonthCalendar();
     }, [reminders.reminders]);
 

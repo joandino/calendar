@@ -11,8 +11,9 @@ import Snackbar from '@mui/material/Snackbar';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import moment from 'moment';
 import axios from 'axios';
-import { useDispatch } from 'react-redux';
-import { addReminderAction } from '../actions/reminderActions';
+import { useDispatch, useSelector } from 'react-redux';
+import { addReminderAction, editReminderAction } from '../actions/reminderActions';
+import { RootState } from '../reducers';
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
     props,
@@ -38,6 +39,11 @@ const ReminderDialog = (props:any) => {
 
     const dispatch = useDispatch();
     const addReminder = (reminder:any) => dispatch(addReminderAction(reminder));
+    const editReminder = (reminder:any) => dispatch(editReminderAction(reminder));
+
+    const reminderState:any = useSelector((state: RootState) => {
+        return state.reminders;
+    });
 
     const handleClose = () => {
         setPopAlert(false);
@@ -70,6 +76,7 @@ const ReminderDialog = (props:any) => {
     }
 
     const handleUnfocus = (e:any) => {
+        console.log("Here");
         let city:any = e.target.value;
 
         let hour = moment(fromTime, 'HH:mm').format('HH:mm:ss');
@@ -92,10 +99,12 @@ const ReminderDialog = (props:any) => {
         .catch((err:any) => {
             setPopAlert(true);
             setAlertText("Must enter a valid city");
+            setWeatherIcon("");
+            setForecast("");
         })
     }
 
-    const handleAddReminder = () => {
+    const handleSaveReminder = () => {
         if(title.trim() === ""){
             setAlertText("Title is required");
             setPopAlert(true);
@@ -118,17 +127,40 @@ const ReminderDialog = (props:any) => {
         let dateCode = Number(`${year}${monthNumber}${day}`);
         let ipAddress = props.data.ipAddress;
 
-        addReminder({
-            id,
-            dateCode,
-            title,
-            fromTime,
-            toTime,
-            city,
-            ipAddress
-        })
+        if(props.data.action === "ADD"){
+            addReminder({
+                id,
+                dateCode,
+                title,
+                fromTime,
+                toTime,
+                city,
+                ipAddress
+            })
 
-        props.handleAddReminder();
+            setWeatherIcon("");
+            setForecast("");
+
+            console.log("There");
+
+            props.handleAddReminder();
+        }else {
+            const edit = reminderState.reminderEdit;
+            editReminder({
+                id: edit.id,
+                dateCode: edit.dateCode,
+                title,
+                fromTime,
+                toTime,
+                city,
+                ipAddress
+            })
+
+            setWeatherIcon("");
+            setForecast("");
+
+            props.handleAddReminder();
+        }
     }
 
     useEffect(() => {
@@ -142,6 +174,8 @@ const ReminderDialog = (props:any) => {
         setToTime(props.data.toTime);
 
         setDate(props.data.date);
+        setWeatherIcon("");
+        setForecast("");
     }, [props.data]);
 
     return(
@@ -210,7 +244,7 @@ const ReminderDialog = (props:any) => {
                         </div>
 
                         { forecast !== "" && weatherIcon !== "" ? (
-                            <div>
+                            <div style={{ textAlign: 'center' }}>
                                 <p>{forecast}</p>
                                 { weatherIcon !== "" ? (<img src={require(`../assets/icons/${weatherIcon}.svg`)} key={weatherIcon} width="50" height="50" />) : "" }
                             </div>
@@ -220,7 +254,7 @@ const ReminderDialog = (props:any) => {
                 </DialogContent>
                 <DialogActions>
                 <Button onClick={handleClose}>Cancel</Button>
-                <Button onClick={handleAddReminder}>Save</Button>
+                <Button onClick={handleSaveReminder}>Save</Button>
                 </DialogActions>
             </Dialog>
 
