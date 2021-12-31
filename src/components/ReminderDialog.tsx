@@ -1,5 +1,4 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import '../assets/dialog.scss';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
