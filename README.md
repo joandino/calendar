@@ -3,6 +3,7 @@
 You can find a live demo of the project here: https://elastic-jepsen-20bd1d.netlify.app/
 
 Note: follow the next instructions so you can make requests to the api, as for development reasons I don't own a SSL certificate to make HTTPS requests from the API.
+Also as the weather API is free subscription the max forecast weather we can consult is only for the next 15 days.
 
 <p align="center">
   <img src="src/assets/images/calendar-1.png" alt="calendar-1" />
