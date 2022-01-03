@@ -13,9 +13,6 @@ Note: follow the next instructions so you can make requests to the api, as for d
 <p align="center">
   <img src="src/assets/images/calendar-3.png" alt="calendar-3" /></a>
 </p>
-<!-- ![calendar-1](src/assets/images/calendar-1.png)
-![calendar-2](src/assets/images/calendar-2.png)
-![calendar-3](src/assets/images/calendar-3.png) -->
 
 ## Available Scripts
 
@@ -56,47 +53,6 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 
 ## File Structure
 
-calendar
-├── build
-├── node_modules
-├── public
-│   ├── calendar.ico
-│   ├── index.html
-│   └── manifest.json
-│   └── robots.txt
-├── src
-│   ├── actions
-│   │   └──reminderActions.tsx
-│   ├── assets
-│   │   └──icons
-│   │   │  └── clear-day.svg
-│   │   │  └── ...
-│   │   └──app.scss
-│   │   └──calendar.scss
-│   ├── components
-│   │   └── app
-│   │       ├── Calendar.tsx
-│   │       ├── ReminderDialog.tsx
-│   ├── reducers
-│   │   └── index.tsx
-│   │   └── reindersReducer.tsx
-│   ├── types
-│   │   └── index.tsx
-│   ├── App.tsx
-│   ├── Index.tsx
-│   ├── reactapp-env.d.ts
-│   ├── reportWebVitals.ts
-│   ├── setUpTests.ts
-│   └── store-js
-├── .env
-├── .gitignore
-├── package-lock.json
-├── package.json
-├── README.md
-└── tsconfig.json
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+<p align="center">
+  <img src="src/assets/images/file-structure.png" alt="file" /></a>
+</p>
