@@ -4,9 +4,9 @@ You can find a live demo of the project here: https://elastic-jepsen-20bd1d.netl
 
 Note: follow the next instructions so you can make requests to the api, as for development reasons I don't own a SSL certificate to make HTTPS requests from the API.
 
-![calendar-1](src/assets/images/calendar-1)
-![calendar-2](src/assets/images/calendar-2)
-![calendar-3](src/assets/images/calendar-3)
+![calendar-1](src/assets/images/calendar-1.png)
+![calendar-2](src/assets/images/calendar-2.png)
+![calendar-3](src/assets/images/calendar-3.png)
 
 ## Available Scripts
 
