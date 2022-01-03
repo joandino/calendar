@@ -1,6 +1,12 @@
-# Getting Started with Create React App
+# Live demo
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+You can find a live demo of the project here: https://elastic-jepsen-20bd1d.netlify.app/
+
+Note: follow the next instructions so you can make requests to the api, as for development reasons I don't own a SSL certificate to make HTTPS requests from the API.
+
+![calendar-1](src/assets/images/calendar-1)
+![calendar-2](src/assets/images/calendar-2)
+![calendar-3](src/assets/images/calendar-3)
 
 ## Available Scripts
 
@@ -38,6 +44,47 @@ If you aren’t satisfied with the build tool and configuration choices, you can
 Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
 
 You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+
+## File Structure
+
+calendar
+├── build
+├── node_modules
+├── public
+│   ├── calendar.ico
+│   ├── index.html
+│   └── manifest.json
+│   └── robots.txt
+├── src
+│   ├── actions
+│   │   └──reminderActions.tsx
+│   ├── assets
+│   │   └──icons
+│   │   │  └── clear-day.svg
+│   │   │  └── ...
+│   │   └──app.scss
+│   │   └──calendar.scss
+│   ├── components
+│   │   └── app
+│   │       ├── Calendar.tsx
+│   │       ├── ReminderDialog.tsx
+│   ├── reducers
+│   │   └── index.tsx
+│   │   └── reindersReducer.tsx
+│   ├── types
+│   │   └── index.tsx
+│   ├── App.tsx
+│   ├── Index.tsx
+│   ├── reactapp-env.d.ts
+│   ├── reportWebVitals.ts
+│   ├── setUpTests.ts
+│   └── store-js
+├── .env
+├── .gitignore
+├── package-lock.json
+├── package.json
+├── README.md
+└── tsconfig.json
 
 ## Learn More
 
