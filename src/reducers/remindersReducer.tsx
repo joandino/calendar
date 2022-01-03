@@ -7,7 +7,10 @@ import { ADD_REMINDER,
         GET_REMINDER_EDIT,
         EDIT_REMINDER,
         EDIT_REMINDER_OK,
-        EDIT_REMINDER_ERROR
+        EDIT_REMINDER_ERROR,
+        GET_DELETE_REMINDER,
+        DELETE_REMINDER_OK,
+        DELETE_REMINDER_ERROR
 } from '../types';
 
 const initialState = {
@@ -36,6 +39,7 @@ export default function(state = initialState, action:any){
         case GET_REMINDERS_ERROR :
         case ADD_REMINDER_ERROR :
         case EDIT_REMINDER_ERROR :
+            case DELETE_REMINDER_ERROR :
             return {
                 ...state,
                 loading:false,
@@ -59,6 +63,17 @@ export default function(state = initialState, action:any){
                 reminderEdit: null,
                 reminders: state.reminders.map((reminder:any) => 
                 reminder.id === action.payload.id ? reminder = action.payload : reminder)
+            }
+        case GET_DELETE_REMINDER :
+            return {
+                ...state,
+                reminderDelete: action.payload
+            }
+        case DELETE_REMINDER_OK : 
+            return {
+                ...state,
+                reminders: state.reminders.filter((reminder:any) => reminder.id !== state.reminderDelete),
+                reminderDelete: null
             }
         default : 
             return state;

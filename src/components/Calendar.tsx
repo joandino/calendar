@@ -84,6 +84,9 @@ const Calendar = (props:any) => {
 
         var event = reminders.reminders.find((item:any) => item.id === Number(eventId));
 
+        let d = event.dateCode.toString();
+        d = d.length > 6 ? [d.slice(0, 4), "-", d.slice(4, 6), "-", d.slice(6, 8)].join('') : [d.slice(0, 4), "-", d.slice(4, 5), "-", d.slice(5, 6)].join('');
+
         setData({
             id: event.id,
             dateCode: event.dateCode,
@@ -92,7 +95,7 @@ const Calendar = (props:any) => {
             toTime: event.toTime,
             city: event.city,
             ipAddress: props.clientIp,
-            date: moment(`${event.dateCode}`).toDate(),
+            date: moment(d).toDate(),
             action: "EDIT"
         });
 

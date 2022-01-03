@@ -8,7 +8,10 @@ import { GET_REMINDERS,
     GET_REMINDER_EDIT,
     EDIT_REMINDER,
     EDIT_REMINDER_OK,
-    EDIT_REMINDER_ERROR
+    EDIT_REMINDER_ERROR,
+    GET_DELETE_REMINDER,
+    DELETE_REMINDER_OK,
+    DELETE_REMINDER_ERROR
 } from '../types';
 
 //Add reminder functions
@@ -110,4 +113,33 @@ const editReminderError = (state:any) => ({
 const editReminderOk = (reminder:any) => ({
     type: EDIT_REMINDER_OK,
     payload: reminder
+})
+
+//Delete reminder functions
+export function deleteReminderAction(id:any) {
+    return async (dispatch:any) => {
+        dispatch(getDeleteReminder(id));
+
+        try {
+            await axios.delete(`${process.env.REACT_APP_API_URL}/reminders/${id}`);
+            dispatch(deleteReminderOk());
+        } catch (error) {
+            console.log(error);
+            dispatch(deleteReminderError(true));
+        }
+    }
+}
+
+const getDeleteReminder = (id:any) => ({
+    type: GET_DELETE_REMINDER,
+    payload: id
+})
+
+const deleteReminderError = (state:any) => ({
+    type: DELETE_REMINDER_ERROR,
+    payload: state
+})
+
+const deleteReminderOk = () => ({
+    type: DELETE_REMINDER_OK
 })

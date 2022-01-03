@@ -7,11 +7,13 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Snackbar from '@mui/material/Snackbar';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography'
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import moment from 'moment';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
-import { addReminderAction, editReminderAction } from '../actions/reminderActions';
+import { addReminderAction, editReminderAction, deleteReminderAction } from '../actions/reminderActions';
 import { RootState } from '../reducers';
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
@@ -23,6 +25,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 
 const ReminderDialog = (props:any) => {
     const [open, setOpen] = useState(false);
+    const [confirmOpen, setConfirmOpen] = useState(false);
     
     const [popAlert, setPopAlert] = useState(false);
     const [alertText, setAlertText] = useState("");
@@ -39,6 +42,7 @@ const ReminderDialog = (props:any) => {
     const dispatch = useDispatch();
     const addReminder = (reminder:any) => dispatch(addReminderAction(reminder));
     const editReminder = (reminder:any) => dispatch(editReminderAction(reminder));
+    const deleteReminder = (id:any) => dispatch(deleteReminderAction(id));
 
     const reminderState:any = useSelector((state: RootState) => {
         return state.reminders;
@@ -74,10 +78,20 @@ const ReminderDialog = (props:any) => {
         setToTime(e.target.value);
     }
 
-    const handleUnfocus = (e:any) => {
-        console.log("Here");
-        let city:any = e.target.value;
+    const handleCloseConfirmation = () => {
+        setConfirmOpen(false);
+    }
 
+    const handleDelete = () => {
+        let id = props.data.id;
+
+        deleteReminder(id);
+        setOpen(false);
+        setConfirmOpen(false);
+        props.handleClose();
+    }
+
+    const handleCheckWeather = () => {
         let hour = moment(fromTime, 'HH:mm').format('HH:mm:ss');
 
         if(city.trim() === "" || fromTime === ""){
@@ -140,8 +154,6 @@ const ReminderDialog = (props:any) => {
             setWeatherIcon("");
             setForecast("");
 
-            console.log("There");
-
             props.handleAddReminder();
         }else {
             const edit = reminderState.reminderEdit;
@@ -184,32 +196,41 @@ const ReminderDialog = (props:any) => {
                     {`Reminder for ${moment(date).format('DD-MM-YYYY')}`}
                 </DialogTitle>
                 <DialogContent>
-                    <Stack component="form" noValidate spacing={3}>
-                        <TextField
-                            autoFocus
-                            margin="dense"
-                            id="name"
-                            label="Title"
-                            type="text"
-                            value={title}
-                            onChange={(e:any) => setTitle(e.target.value)}
-                            fullWidth
-                            variant="standard"
-                        />
+                    <Grid container spacing={3} columns={10}>
+                        <Grid item xs={10}>
+                            <TextField
+                                autoFocus
+                                margin="dense"
+                                id="name"
+                                label="Title"
+                                type="text"
+                                value={title}
+                                onChange={(e:any) => setTitle(e.target.value)}
+                                fullWidth
+                                variant="standard"
+                            />
+                        </Grid>
 
-                        <TextField
-                            margin="dense"
-                            id="name"
-                            label="City"
-                            type="text"
-                            value={city}
-                            onChange={(e:any) => setCity(e.target.value)}
-                            onBlur={(e:any) => handleUnfocus(e)}
-                            fullWidth
-                            variant="standard"
-                        />
+                        {/* <Grid container spacing={2}> */}
+                        <Grid item xs={4}>
+                            <TextField
+                                margin="dense"
+                                id="name"
+                                label="City"
+                                type="text"
+                                value={city}
+                                onChange={(e:any) => setCity(e.target.value)}
+                                fullWidth
+                                variant="standard"
+                            />
+                        </Grid>
 
-                        <div>
+                        <Grid item xs={6}>
+                            <Button variant="contained" onClick={handleCheckWeather}>Check weather for city</Button>
+                        </Grid>
+                        {/* </Grid> */}
+
+                        <Grid item xs={5}>
                             <TextField
                                 id="time"
                                 label="From"
@@ -221,10 +242,12 @@ const ReminderDialog = (props:any) => {
                                 inputProps={{
                                 step: 300 // 5 min
                                 }}
-                                sx={{ width: 150 }}
+                                sx={{ width: "100%" }}
                                 onChange={handleChangeFromTime}
                             />
+                        </Grid>
 
+                        <Grid item xs={5}>
                             <TextField
                                 id="time"
                                 label="To"
@@ -237,22 +260,23 @@ const ReminderDialog = (props:any) => {
                                 inputProps={{
                                 step: 300 // 5 min
                                 }}
-                                sx={{ width: 150 }}
+                                sx={{ width: "100%" }}
                                 onChange={handleChangeToTime}
                             />
-                        </div>
+                        </Grid>
 
                         { forecast !== "" && weatherIcon !== "" ? (
-                            <div style={{ textAlign: 'center' }}>
+                            <Grid item xs={10} style={{ textAlign: 'center' }}>
                                 <p>{forecast}</p>
-                                { weatherIcon !== "" ? (<img src={require(`../assets/icons/${weatherIcon}.svg`)} key={weatherIcon} width="50" height="50" />) : "" }
-                            </div>
+                                { weatherIcon !== "" ? (<img src={require(`../assets/icons/${weatherIcon}.svg`)} alt={weatherIcon} key={weatherIcon} width="50" height="50" />) : "" }
+                            </Grid>
                             )  : ""
                         }
-                    </Stack>        
+                    </Grid>        
                 </DialogContent>
                 <DialogActions>
                 <Button onClick={handleClose}>Cancel</Button>
+                {props.data.action === "EDIT" ? <Button onClick={() => setConfirmOpen(true)}>Delete</Button> : ""}
                 <Button onClick={handleSaveReminder}>Save</Button>
                 </DialogActions>
             </Dialog>
@@ -262,6 +286,21 @@ const ReminderDialog = (props:any) => {
                     {alertText}
                 </Alert>
             </Snackbar>
+
+            <Dialog open={confirmOpen} onClose={handleCloseConfirmation} maxWidth="xs" fullWidth>
+            {/* <DialogTitle>Delete reminder</DialogTitle> */}
+            <DialogContent>
+                <Typography>Are you sure you want to delete this reminder?</Typography>
+            </DialogContent>
+            <DialogActions>
+                <Button color="primary" variant="contained" onClick={() => setConfirmOpen(false)}>
+                Cancel
+                </Button>
+                <Button color="primary" variant="contained" onClick={handleDelete}>
+                Confirm
+                </Button>
+            </DialogActions>
+            </Dialog>
         </Fragment>
     )
 }
